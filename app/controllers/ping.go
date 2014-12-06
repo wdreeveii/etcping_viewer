@@ -17,6 +17,7 @@ type Alarm struct {
 	Alias   sql.NullString
 	DTStart sql.NullString
 	Ticket  sql.NullString
+	Hold    string
 }
 
 func (c *Ping) Alarms() revel.Result {
@@ -24,7 +25,8 @@ func (c *Ping) Alarms() revel.Result {
 SELECT hosts.ip,
        hosts.alias,
 	   alarms.dtStart,
-       alarms.ticket
+       alarms.ticket,
+       IF(alarms.hold, 1, 0) AS hold
 FROM alarms
 LEFT JOIN hosts
 ON hosts.ip = alarms.ip
@@ -37,6 +39,17 @@ AND alarms.dtEnd IS NULL
 	}
 
 	return c.RenderJson(results)
+}
+
+func (c *Ping) SetHold(host string, state int) revel.Result {
+	var query = `
+UPDATE alarms SET hold = ? WHERE ip = ?
+`
+	_, err := c.Txn.Exec(query, state, host)
+	if err != nil {
+		return c.RenderError(err)
+	}
+	return c.RenderJson("OK")
 }
 
 type DBPingTimeSeries struct {

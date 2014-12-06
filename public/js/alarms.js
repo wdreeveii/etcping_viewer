@@ -34,6 +34,30 @@ var GraphPopOver = React.createClass({
 			);
 	}
 });
+var ManagedCheckbox = React.createClass({
+	getInitialState: function() {
+		return {checked: (this.props.ischecked == "1")};
+	},
+	handleChange: function(ev) {
+		this.setState({checked: ev.target.checked});
+		var tmp = ev.target.checked | 0;
+		$.ajax({
+			type: "POST",
+			url: "/ping/hold/" + this.props.host + "/" + tmp,
+			dataType: 'json'
+		});
+	},
+	componentWillReceiveProps: function(new_props) {
+		if (this.state.checked != (new_props.ischecked == "1")) {
+			this.setState({checked: (new_props.ischecked == "1")});
+		}
+	},
+	render: function () {
+		return (
+				<input onChange={this.handleChange} type="checkbox" checked={this.state.checked}/>
+			);
+	}
+});
 
 var AlarmList = React.createClass({
 	render: function() {
@@ -51,6 +75,7 @@ var AlarmList = React.createClass({
 					<td>{alarm.Alias.String}</td>
 					<td>{alarm.DTStart.String}</td>
 					<td>{relative}</td>
+					<td><ManagedCheckbox host={alarm.IP} ischecked={alarm.Hold}/></td>
 					<td>{alarm.Ticket.String}</td>
 				</tr>
 			);
@@ -64,6 +89,7 @@ var AlarmList = React.createClass({
 						<th>Alias</th>
 						<th>Alarm Start</th>
 						<th>Duration</th>
+						<th>Hold</th>
 						<th>Ticket</th>
 					</tr>
 					{alarmNodes}
