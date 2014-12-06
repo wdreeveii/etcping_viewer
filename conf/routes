@@ -7,6 +7,7 @@ module:testrunner
 GET     /                                       App.Index
 GET		/view									App.Viewer
 GET		/ping/alarms							Ping.Alarms
+GET		/ping/plot/:host						Ping.PlotHistory
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

@@ -1,3 +1,17 @@
-.table th, .table td {
+.table thead tr th, .table tbody tr td {
 	padding: 0px;
 }
+.updateStatus {
+	font-size: 12px;
+}
+
+.GraphPopOver {
+	position: absolute;
+	left: 50%;
+	margin-left: -325px;
+	margin-top: -200px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #EEE;
+}
+
